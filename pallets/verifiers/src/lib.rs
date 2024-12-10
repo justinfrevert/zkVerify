@@ -309,6 +309,7 @@ pub mod pallet {
                     vk.as_ref().clone()
                 }
             };
+
             let account = ensure_signed(origin).ok();
             let statement = compute_hash::<I>(&pubs, &vk_or_hash);
             I::verify_proof(&vk, &proof, &pubs)

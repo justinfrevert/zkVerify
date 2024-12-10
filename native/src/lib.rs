@@ -20,7 +20,8 @@ use sp_runtime_interface::pass_by::PassByCodec;
 
 mod groth16;
 mod risc0;
-mod ultraplonk;
+// mod ultraplonk;
+mod valida;
 mod zksync;
 
 #[derive(PassByCodec, Encode, Decode)]
@@ -54,12 +55,12 @@ pub use risc0::risc_0_verify;
 #[cfg(feature = "std")]
 pub use risc0::risc_0_verify::HostFunctions as Risc0VerifierHostFunctions;
 
-pub use ultraplonk::ultraplonk_verify;
-#[cfg(feature = "std")]
-pub use ultraplonk::ultraplonk_verify::HostFunctions as UltraplonkVerifierHostFunctions;
-pub use ultraplonk::PROOF_SIZE as ULTRAPLONK_PROOF_SIZE;
-pub use ultraplonk::PUBS_SIZE as ULTRAPLONK_PUBS_SIZE;
-pub use ultraplonk::VK_SIZE as ULTRAPLONK_VK_SIZE;
+// pub use ultraplonk::ultraplonk_verify;
+// #[cfg(feature = "std")]
+// pub use ultraplonk::ultraplonk_verify::HostFunctions as UltraplonkVerifierHostFunctions;
+// pub use ultraplonk::PROOF_SIZE as ULTRAPLONK_PROOF_SIZE;
+// pub use ultraplonk::PUBS_SIZE as ULTRAPLONK_PUBS_SIZE;
+// pub use ultraplonk::VK_SIZE as ULTRAPLONK_VK_SIZE;
 
 pub use groth16::groth_16_bls_12_381_verify;
 #[cfg(feature = "std")]
@@ -68,11 +69,16 @@ pub use groth16::groth_16_bn_254_verify;
 #[cfg(feature = "std")]
 pub use groth16::groth_16_bn_254_verify::HostFunctions as Groth16Bn254VerifierHostFunctions;
 
+pub use valida::valida_verify;
+#[cfg(feature = "std")]
+pub use valida::valida_verify::HostFunctions as ValidaVerifierHostFunctions;
+
 #[cfg(feature = "std")]
 pub type HLNativeHostFunctions = (
     ZksyncVerifierHostFunctions,
     Risc0VerifierHostFunctions,
-    UltraplonkVerifierHostFunctions,
+    // UltraplonkVerifierHostFunctions,
     Groth16Bn254VerifierHostFunctions,
     Groth16Bls12VerifierHostFunctions,
+    ValidaVerifierHostFunctions,
 );

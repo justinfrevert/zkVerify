@@ -40,34 +40,33 @@ impl InstanceFilter<RuntimeCall> for ProxyType {
             ProxyType::NonTransfer => matches!(
                 c,
                 RuntimeCall::System(..) |
-				RuntimeCall::Scheduler(..) |
-				RuntimeCall::Babe(..) |
-				RuntimeCall::Timestamp(..) |
-				// Specifically omitting Indices `transfer`, `force_transfer`
-				// Specifically omitting the entire Balances pallet
-				RuntimeCall::Staking(..) |
-				RuntimeCall::Session(..) |
-				RuntimeCall::Grandpa(..) |
-				RuntimeCall::Treasury(..) |
-				RuntimeCall::Bounties(..) |
-				RuntimeCall::ChildBounties(..) |
-				RuntimeCall::ConvictionVoting(..) |
-				RuntimeCall::Referenda(..) |
-				RuntimeCall::Whitelist(..) |
-				RuntimeCall::Vesting(pallet_vesting::Call::vest{..}) |
-				RuntimeCall::Vesting(pallet_vesting::Call::vest_other{..}) |
-				// Specifically omitting Vesting `vested_transfer`, and `force_vested_transfer`
-				RuntimeCall::Utility(..) |
-				RuntimeCall::Proxy(..) |
-				RuntimeCall::Multisig(..) |
-				RuntimeCall::VoterList(..) |
+                RuntimeCall::Scheduler(..) |
+                RuntimeCall::Babe(..) |
+                RuntimeCall::Timestamp(..) |
+                // Specifically omitting Indices `transfer`, `force_transfer`
+                // Specifically omitting the entire Balances pallet
+                RuntimeCall::Staking(..) |
+                RuntimeCall::Session(..) |
+                RuntimeCall::Grandpa(..) |
+                RuntimeCall::Treasury(..) |
+                RuntimeCall::Bounties(..) |
+                RuntimeCall::ChildBounties(..) |
+                RuntimeCall::ConvictionVoting(..) |
+                RuntimeCall::Referenda(..) |
+                RuntimeCall::Whitelist(..) |
+                RuntimeCall::Vesting(pallet_vesting::Call::vest{..}) |
+                RuntimeCall::Vesting(pallet_vesting::Call::vest_other{..}) |
+                // Specifically omitting Vesting `vested_transfer`, and `force_vested_transfer`
+                RuntimeCall::Utility(..) |
+                RuntimeCall::Proxy(..) |
+                RuntimeCall::Multisig(..) |
+                RuntimeCall::VoterList(..) |
                 // zkVerify specifics
                 RuntimeCall::Poe(..) |
                 RuntimeCall::SettlementFFlonkPallet(..) |
                 RuntimeCall::SettlementZksyncPallet(..) |
                 RuntimeCall::SettlementGroth16Pallet(..) |
-                RuntimeCall::SettlementRisc0Pallet(..) |
-                RuntimeCall::SettlementUltraplonkPallet(..)
+                RuntimeCall::SettlementRisc0Pallet(..) // RuntimeCall::SettlementUltraplonkPallet(..)
             ),
             ProxyType::Governance => matches!(
                 c,

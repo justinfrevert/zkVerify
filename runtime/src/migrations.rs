@@ -91,9 +91,9 @@ pub type Unreleased = (
         Runtime,
         pallet_proofofsql_verifier::ProofOfSql<Runtime>,
     >,
-    pallet_verifiers::migrations::v1::MigrateV0ToV1<
-        Runtime,
-        pallet_ultraplonk_verifier::Ultraplonk<Runtime>,
-    >,
+    // pallet_verifiers::migrations::v1::MigrateV0ToV1<
+    //     Runtime,
+    //     pallet_ultraplonk_verifier::Ultraplonk<Runtime>,
+    // >,
     pallet_verifiers::migrations::v1::MigrateV0ToV1<Runtime, pallet_zksync_verifier::Zksync>,
 );

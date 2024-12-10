@@ -1,0 +1,3 @@
+# STEPS
+
+docker run -p 9944:9944 -e HOST_CONTAINER_PATH=$(realpath .) -e HOST_CONTAINER_PATH= -e ZKV_CONF_RPC_CORS=All -e ZKV_CONF_UNSAFE_RPC_EXTERNAL=true -e ZKV_CONF_ALICE=true  -e ZKV_CONF_CHAIN=dev -e ZKV_CONF_FORCE_AUTHORING=true -e ZKV_CONF_VALIDATOR=true -e ZKV_CONF_NODE_KEY="0000000000000000000000000000000000000000000000000000000000000001"  03bb3ad22059 -v /var/run/docker.sock:/var/run/docker.sock  -v  $(realpath .)/data:/data  --rpc-cors all --rpc-external

@@ -228,7 +228,7 @@ const AVERAGE_ON_INITIALIZE_RATIO: Perbill = Perbill::from_percent(10);
 const NORMAL_DISPATCH_RATIO: Perbill = Perbill::from_percent(75);
 /// We allow for 2 seconds of compute with a 6 second average block time, with maximum proof size.
 const MAXIMUM_BLOCK_WEIGHT: Weight =
-    Weight::from_parts(WEIGHT_REF_TIME_PER_SECOND.saturating_mul(2), u64::MAX);
+    Weight::from_parts(WEIGHT_REF_TIME_PER_SECOND.saturating_mul(10), u64::MAX);
 
 parameter_types! {
     pub const BlockHashCount: BlockNumber = 2400;
@@ -238,10 +238,10 @@ parameter_types! {
         frame_system::limits::BlockWeights::builder()
         .base_block(BlockExecutionWeight::get())
         .for_class(DispatchClass::all(), |weights| {
-            weights.base_extrinsic = ExtrinsicBaseWeight::get();
+            weights.base_extrinsic = ExtrinsicBaseWeight::get() * 10;
         })
         .for_class(DispatchClass::Normal, |weights| {
-            weights.max_total = Some(NORMAL_DISPATCH_RATIO * MAXIMUM_BLOCK_WEIGHT);
+            weights.max_total = Some(NORMAL_DISPATCH_RATIO * MAXIMUM_BLOCK_WEIGHT * 10);
         })
         .for_class(DispatchClass::Operational, |weights| {
             weights.max_total = Some(MAXIMUM_BLOCK_WEIGHT);
@@ -942,20 +942,20 @@ parameter_types! {
     pub const UltraplonkMaxPubs: u32 = 32;
 }
 
-impl pallet_ultraplonk_verifier::Config for Runtime {
-    type MaxPubs = UltraplonkMaxPubs;
-}
+// impl pallet_ultraplonk_verifier::Config for Runtime {
+//     type MaxPubs = UltraplonkMaxPubs;
+// }
 
-impl pallet_verifiers::Config<pallet_ultraplonk_verifier::Ultraplonk<Runtime>> for Runtime {
-    type RuntimeEvent = RuntimeEvent;
-    type OnProofVerified = (Poe, Aggregate);
-    type WeightInfo = pallet_ultraplonk_verifier::UltraplonkWeight<
-        weights::pallet_ultraplonk_verifier::ZKVWeight<Runtime>,
-    >;
-    type Ticket = VkRegistrationHoldConsideration;
-    #[cfg(feature = "runtime-benchmarks")]
-    type Currency = Balances;
-}
+// impl pallet_verifiers::Config<pallet_ultraplonk_verifier::Ultraplonk<Runtime>> for Runtime {
+//     type RuntimeEvent = RuntimeEvent;
+//     type OnProofVerified = (Poe, Aggregate);
+//     type WeightInfo = pallet_ultraplonk_verifier::UltraplonkWeight<
+//         weights::pallet_ultraplonk_verifier::ZKVWeight<Runtime>,
+//     >;
+//     type Ticket = VkRegistrationHoldConsideration;
+//     #[cfg(feature = "runtime-benchmarks")]
+//     type Currency = Balances;
+// }
 
 parameter_types! {
     pub const ProofOfSqlLargestMaxNu: u32 = 8;
@@ -969,6 +969,27 @@ const_assert!(
     <Runtime as pallet_proofofsql_verifier::Config>::LargestMaxNu::get()
         <= pallet_proofofsql_verifier::LARGEST_MAX_NU_LIMIT
 );
+
+parameter_types! {
+    // TODO: determine values
+    pub const Valida0MaxProofSize: u32 = 2000000;
+    pub const ValidaPubsSize: u32 = 2000000;
+}
+
+impl pallet_valida_verifier::Config for Runtime {
+    type MaxProofSize = Valida0MaxProofSize;
+    type MaxPubsSize = ValidaPubsSize;
+}
+
+impl pallet_verifiers::Config<pallet_valida_verifier::Valida<Runtime>> for Runtime {
+    type RuntimeEvent = RuntimeEvent;
+    type OnProofVerified = (Poe, Aggregate);
+    type WeightInfo =
+        pallet_valida_verifier::ValidaWeight<weights::pallet_valida_verifier::ZKVWeight<Runtime>>;
+    type Ticket = VkRegistrationHoldConsideration;
+    #[cfg(feature = "runtime-benchmarks")]
+    type Currency = Balances;
+}
 
 impl pallet_verifiers::Config<pallet_proofofsql_verifier::ProofOfSql<Runtime>> for Runtime {
     type RuntimeEvent = RuntimeEvent;
@@ -1055,7 +1076,8 @@ construct_runtime!(
         SettlementZksyncPallet: pallet_zksync_verifier,
         SettlementGroth16Pallet: pallet_groth16_verifier,
         SettlementRisc0Pallet: pallet_risc0_verifier,
-        SettlementUltraplonkPallet: pallet_ultraplonk_verifier,
+        // SettlementUltraplonkPallet: pallet_ultraplonk_verifier,
+        SettlementValidaPallet: pallet_valida_verifier,
         Treasury: pallet_treasury,
         Bounties: pallet_bounties,
         ChildBounties: pallet_child_bounties,
@@ -1161,8 +1183,9 @@ construct_runtime!(
         SettlementZksyncPallet: pallet_zksync_verifier = 162,
         SettlementGroth16Pallet: pallet_groth16_verifier = 163,
         SettlementRisc0Pallet: pallet_risc0_verifier = 164,
-        SettlementUltraplonkPallet: pallet_ultraplonk_verifier = 165,
+        // SettlementUltraplonkPallet: pallet_ultraplonk_verifier = 165,
         SettlementProofOfSqlPallet: pallet_proofofsql_verifier = 166,
+        SettlementValidaPallet: pallet_valida_verifier = 167,
     }
 );
 
@@ -1248,8 +1271,9 @@ mod benches {
         [pallet_fflonk_verifier, FflonkVerifierBench::<Runtime>]
         [pallet_groth16_verifier, Groth16VerifierBench::<Runtime>]
         [pallet_risc0_verifier, Risc0VerifierBench::<Runtime>]
-        [pallet_ultraplonk_verifier, UltraplonkVerifierBench::<Runtime>]
+        // [pallet_ultraplonk_verifier, UltraplonkVerifierBench::<Runtime>]
         [pallet_proofofsql_verifier, ProofOfSqlVerifierBench::<Runtime>]
+        [pallet_valida_verifier, ValidaVerifierBench::<Runtime>]
     );
 }
 
@@ -1286,8 +1310,9 @@ mod benches {
         [pallet_fflonk_verifier, FflonkVerifierBench::<Runtime>]
         [pallet_groth16_verifier, Groth16VerifierBench::<Runtime>]
         [pallet_risc0_verifier, Risc0VerifierBench::<Runtime>]
-        [pallet_ultraplonk_verifier, UltraplonkVerifierBench::<Runtime>]
+        // [pallet_ultraplonk_verifier, UltraplonkVerifierBench::<Runtime>]
         [pallet_proofofsql_verifier, ProofOfSqlVerifierBench::<Runtime>]
+        [pallet_valida_verifier, ValidaVerifierBench::<Runtime>]
         // parachains
         [crate::parachains::configuration, Configuration]
         [crate::parachains::disputes, ParasDisputes]
@@ -1792,8 +1817,9 @@ impl_runtime_apis! {
             use pallet_zksync_verifier::benchmarking::Pallet as ZksyncVerifierBench;
             use pallet_groth16_verifier::benchmarking::Pallet as Groth16VerifierBench;
             use pallet_risc0_verifier::benchmarking::Pallet as Risc0VerifierBench;
-            use pallet_ultraplonk_verifier::benchmarking::Pallet as UltraplonkVerifierBench;
+            // use pallet_ultraplonk_verifier::benchmarking::Pallet as UltraplonkVerifierBench;
             use pallet_proofofsql_verifier::benchmarking::Pallet as ProofOfSqlVerifierBench;
+            use pallet_valida_verifier::benchmarking::Pallet as ValidaVerifierBench;
 
             #[cfg(feature = "relay")]
             pub mod xcm {
@@ -1823,7 +1849,7 @@ impl_runtime_apis! {
             use pallet_zksync_verifier::benchmarking::Pallet as ZksyncVerifierBench;
             use pallet_groth16_verifier::benchmarking::Pallet as Groth16VerifierBench;
             use pallet_risc0_verifier::benchmarking::Pallet as Risc0VerifierBench;
-            use pallet_ultraplonk_verifier::benchmarking::Pallet as UltraplonkVerifierBench;
+            // use pallet_ultraplonk_verifier::benchmarking::Pallet as UltraplonkVerifierBench;
             use pallet_proofofsql_verifier::benchmarking::Pallet as ProofOfSqlVerifierBench;
 
             #[cfg(feature = "relay")]
